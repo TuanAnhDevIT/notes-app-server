@@ -9,16 +9,16 @@ const prisma = new PrismaClient();
 app.use(express.json());
 app.use(cors());
 
-app.get("/api/notes", async (req, res) => {
-  res.json({ message: "success!" });
-});
+// app.get("/api/notes", async (req, res) => {
+//   res.json({ message: "success!" });
+// });
 
-app.get("/notes", async (req, res) => {
+app.get("/api/notes", async (req, res) => {
   const notes = await prisma.note.findMany();
   res.json(notes);
 });
 
-app.post("/notes", async (req: Request, res: Response) => {
+app.post("/api/notes", async (req: Request, res: Response) => {
   const { title, content } = req.body;
 
   try {
