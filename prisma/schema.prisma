@@ -17,4 +17,14 @@ model Note {
   id      Int     @id @default(autoincrement())
   title   String
   content String
+  userId Int 
+  user User @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  password String
+  refreshToken String?
+  notes Note[]
 }

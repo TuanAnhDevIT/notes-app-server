@@ -1,17 +1,46 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
+import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
 
 const app = express();
-
 const prisma = new PrismaClient();
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-// app.get("/api/notes", async (req, res) => {
-//   res.json({ message: "success!" });
-// });
+// const authenticate = (req: Request, res: Response, next: any) => {
+//   const token = req.header("Authorization")?.split(" ")[1];
+//   if (!token) {
+//     return res.status(401).send("Access denied. No token provided.");
+//   }
+//   jwt.verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
+//     if (err) {
+//       return res.status(403).send("Invalid token.");
+//     }
+//     req.user = user;
+//     next();
+//   });
+// };
+
+// app.use('/auth', authRouter);
+
+const authRouter = require("./auth/auth.routes");
+// const userRouter = require("./users/user.routes");
+
+app.get("/", (req, res) => {
+  console.log(req.body);
+  res.send("APP IS RUNNING");
+});
+
+app.use("/auth", authRouter);
+// app.use("/users", userRouter);
 
 app.get("/api/notes", async (req, res) => {
   const notes = await prisma.note.findMany();
@@ -26,6 +55,7 @@ app.post("/api/notes", async (req: Request, res: Response) => {
       data: {
         title,
         content,
+        userId: 1,
       },
     });
     res.status(201).json(newNote);
